@@ -8,19 +8,12 @@ COMMAND=docker-compose
 
 all: run
 
-run: 
+run:
+	mkdir -p /home/amonteli/docker/data/database
+	mkdir -p /home/amonteli/docker/data/wordpress
 	$(COMMAND) -f $(SRC) up --build
-
-detach: 
-	$(COMMAND) -f $(SRC) up -d --build
-
-ps:
-	$(COMMAND) -f $(SRC) ps
-
-top:
-	$(COMMAND) -f $(SRC) top
 
 fclean:
 	$(COMMAND) -f $(SRC) down --rmi all -v
-
-.PHONY: run detach ps top fclean 
+	rm -rf /home/amonteli/docker/data/wordpress
+	rm -rf /home/amonteli/docker/data/database
