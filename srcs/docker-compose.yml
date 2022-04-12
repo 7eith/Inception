@@ -1,0 +1,55 @@
+version: "3.7"
+services:
+
+  mariadb:
+    container_name: mariadb
+    image: "mariadb"
+    restart: always
+    build:
+      context: mariadb
+      args:
+        - DB_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+        - DB_USERNAME=${DB_USERNAME}
+        - DB_PASSWORD=${DB_PASSWORD}
+        - DB_DATABASE=${DB_DATABASE}
+        - WP_ROOT_USERNAME=${WP_ROOT_USERNAME}
+        - WP_ROOT_PASSWORD=${WP_ROOT_PASSWORD}
+        - WP_USER_PASSWORD=${WP_USER_PASSWORD}
+    networks:
+      - inception
+    volumes:
+      - "database_vol:/var/lib/mysql"
+
+  nginx:
+    container_name: nginx
+    image: nginx
+    restart: always
+    build: nginx
+    volumes:
+      - wordpress_vol:/var/www/app
+    ports:
+      - "443:443"
+    networks:
+      - inception
+
+  wordpress:
+    container_name: wordpress
+    image: wordpress
+    restart: always
+    build:
+      context: wordpress
+      args:
+        - DB_USERNAME=${DB_USERNAME}
+        - DB_PASSWORD=${DB_PASSWORD}
+        - DB_DATABASE=${DB_DATABASE}
+    volumes:
+      - wordpress_vol:/var/www/app
+    networks:
+      - inception
+
+volumes:
+  wordpress_vol:
+  database_vol:
+
+networks:
+  inception:
